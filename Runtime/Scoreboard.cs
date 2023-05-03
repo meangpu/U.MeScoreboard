@@ -91,7 +91,7 @@ namespace Meangpu
 
             foreach (Transform child in highScoreHolderTransform)
             {
-                DestroyImmediate(child.gameObject);
+                Destroy(child.gameObject);
             }
 
             for (int i = 0; i < oldScore.highScores.Count; i++)
