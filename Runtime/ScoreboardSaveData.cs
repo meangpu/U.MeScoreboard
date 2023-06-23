@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 
-public class ScoreboardSaveData
+namespace Meangpu.Scoreboard
 {
-    public List<ScoreboardEntryData> highScores = new List<ScoreboardEntryData>();
+    public class ScoreboardSaveData
+    {
+        public List<ScoreboardEntryData> highScores = new();
+    }
 }

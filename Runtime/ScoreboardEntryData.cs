@@ -1,10 +1,13 @@
 using System;
 
-[Serializable]
-
-public struct ScoreboardEntryData
+namespace Meangpu.Scoreboard
 {
-    public string entryName;
-    public int entryScore;
-    public bool isNewAdd;
+    [Serializable]
+
+    public struct ScoreboardEntryData
+    {
+        public string entryName;
+        public int entryScore;
+        public bool isNewAdd;
+    }
 }

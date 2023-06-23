@@ -1,15 +1,17 @@
+using System.Linq.Expressions;
 using System.IO;
 using UnityEngine;
 using EasyButtons;
 using System;
 
-namespace Meangpu
+namespace Meangpu.Scoreboard
 {
     public class Scoreboard : MonoBehaviour
     {
         [SerializeField] private int maxScoreBoardEntries = 5;
         [SerializeField] private Transform highScoreHolderTransform = null;
         [SerializeField] private GameObject scoreboardEntryObject = null;
+        [SerializeField] bool isZeroIsHighScore;
         private string SavePath => $"{Application.persistentDataPath}/highScore.json";
 
         private void Start()
@@ -24,8 +26,7 @@ namespace Meangpu
         {
             string date = DateTime.Now.ToString("d-MMM-yyy");
             string time = DateTime.Now.ToString("t");
-            string finalDateTime = $"{date} {time}";
-            return finalDateTime;
+            return $"{date} {time}";
         }
 
         [Button]
@@ -41,16 +42,13 @@ namespace Meangpu
 
         public ScoreboardEntryData MakeScoreOld(ScoreboardEntryData score)
         {
-            ScoreboardEntryData scoreWithOldData = new ScoreboardEntryData()
+            return new ScoreboardEntryData()
             {
                 entryName = score.entryName,
                 entryScore = score.entryScore,
                 isNewAdd = false
             };
-            return scoreWithOldData;
         }
-
-
 
         public void AddEntry(ScoreboardEntryData newScoreData)
         {
@@ -62,13 +60,28 @@ namespace Meangpu
                 oldScore.highScores[i] = MakeScoreOld(oldScore.highScores[i]);
             }
 
-            for (int i = 0; i < oldScore.highScores.Count; i++)
+            if (isZeroIsHighScore)
             {
-                if (newScoreData.entryScore < oldScore.highScores[i].entryScore)
+                for (int i = 0; i < oldScore.highScores.Count; i++)
                 {
-                    oldScore.highScores.Insert(i, newScoreData);
-                    scoreAdded = true;
-                    break;
+                    if (newScoreData.entryScore < oldScore.highScores[i].entryScore)
+                    {
+                        oldScore.highScores.Insert(i, newScoreData);
+                        scoreAdded = true;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < oldScore.highScores.Count; i++)
+                {
+                    if (newScoreData.entryScore > oldScore.highScores[i].entryScore)
+                    {
+                        oldScore.highScores.Insert(i, newScoreData);
+                        scoreAdded = true;
+                        break;
+                    }
                 }
             }
 
@@ -88,7 +101,6 @@ namespace Meangpu
 
         private void UpdateUI(ScoreboardSaveData oldScore)
         {
-
             foreach (Transform child in highScoreHolderTransform)
             {
                 Destroy(child.gameObject);
@@ -109,7 +121,6 @@ namespace Meangpu
                     uiScpt.MakeHighScore();
                 }
             }
-
         }
 
         [Button]
@@ -127,29 +138,23 @@ namespace Meangpu
                 File.Create(SavePath).Dispose();
                 return new ScoreboardSaveData();
             }
-            using (StreamReader stream = new StreamReader(SavePath))
+            using StreamReader stream = new(SavePath);
+            string json = stream.ReadToEnd();
+            if (json?.Length == 0)
             {
-                string json = stream.ReadToEnd();
-                if (json == "")
-                {
-                    return new ScoreboardSaveData();
-                }
-                else
-                {
-                    return JsonUtility.FromJson<ScoreboardSaveData>(json);
-                }
+                return new ScoreboardSaveData();
             }
-
+            else
+            {
+                return JsonUtility.FromJson<ScoreboardSaveData>(json);
+            }
         }
 
         private void SaveScores(ScoreboardSaveData scoreboardSaveData)
         {
-            using (StreamWriter stream = new StreamWriter(SavePath))
-            {
-                string json = JsonUtility.ToJson(scoreboardSaveData, true);
-                stream.Write(json);
-            }
+            using StreamWriter stream = new(SavePath);
+            string json = JsonUtility.ToJson(scoreboardSaveData, true);
+            stream.Write(json);
         }
-
     }
 }
