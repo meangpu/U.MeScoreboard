@@ -20,14 +20,7 @@ namespace Meangpu.Scoreboard
             entryScoreText.text = scoreboardEntryData.entryScore.ToString();
             idText.text = id.ToString();
         }
-        public void MakeHighScore()
-        {
-            bgImage.color = highScoreCol;
-        }
-
-        public void MakeJustAdd()
-        {
-            bgImageJustAdd.color = justAddCol;
-        }
+        public void MakeHighScore() => bgImage.color = highScoreCol;
+        public void MakeJustAdd() => bgImageJustAdd.color = justAddCol;
     }
 }

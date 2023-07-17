@@ -114,15 +114,9 @@ namespace Meangpu.Scoreboard
                 GameObject newScore = Instantiate(scoreboardEntryObject, highScoreHolderTransform);
                 ScoreboardEntryUI uiScpt = newScore.GetComponent<ScoreboardEntryUI>();
                 uiScpt.Initialize(oldScore.highScores[i], i + 1);
-                if (oldScore.highScores[i].isNewAdd)
-                {
-                    uiScpt.MakeJustAdd();
-                }
 
-                if (i == 0)
-                {
-                    uiScpt.MakeHighScore();
-                }
+                if (oldScore.highScores[i].isNewAdd) uiScpt.MakeJustAdd();
+                if (i == 0) uiScpt.MakeHighScore();
             }
         }
 
@@ -143,14 +137,9 @@ namespace Meangpu.Scoreboard
             }
             using StreamReader stream = new(SavePath);
             string json = stream.ReadToEnd();
-            if (json?.Length == 0)
-            {
-                return new ScoreboardSaveData();
-            }
-            else
-            {
-                return JsonUtility.FromJson<ScoreboardSaveData>(json);
-            }
+
+            if (json?.Length == 0) return new ScoreboardSaveData();
+            else return JsonUtility.FromJson<ScoreboardSaveData>(json);
         }
 
         private void SaveScores(ScoreboardSaveData scoreboardSaveData)
