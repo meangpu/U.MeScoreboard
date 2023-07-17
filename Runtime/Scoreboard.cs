@@ -1,22 +1,24 @@
-using System.Linq.Expressions;
 using System.IO;
 using UnityEngine;
 using EasyButtons;
 using System;
+using System.Collections.Generic;
 
 namespace Meangpu.Scoreboard
 {
     public class Scoreboard : MonoBehaviour
     {
         [SerializeField] private int maxScoreBoardEntries = 5;
-        [SerializeField] private Transform highScoreHolderTransform = null;
-        [SerializeField] private GameObject scoreboardEntryObject = null;
+        [SerializeField] private Transform highScoreHolderTransform;
+        [SerializeField] private GameObject scoreboardEntryObject;
         [SerializeField] bool isZeroIsHighScore;
+        [SerializeField] bool isDoPrintSavePath;
         private string SavePath => $"{Application.persistentDataPath}/highScore.json";
+        public List<ScoreboardEntryData> highScores = new();
 
         private void Start()
         {
-            print(SavePath);
+            if (isDoPrintSavePath) print(SavePath);
             ScoreboardSaveData oldScore = GetSavedScores();
             UpdateUI(oldScore);
             SaveScores(oldScore);
@@ -60,26 +62,21 @@ namespace Meangpu.Scoreboard
                 oldScore.highScores[i] = MakeScoreOld(oldScore.highScores[i]);
             }
 
-            if (isZeroIsHighScore)
+            for (int i = 0; i < oldScore.highScores.Count; i++)
             {
-                for (int i = 0; i < oldScore.highScores.Count; i++)
+                if (isZeroIsHighScore)
                 {
                     if (newScoreData.entryScore < oldScore.highScores[i].entryScore)
                     {
-                        oldScore.highScores.Insert(i, newScoreData);
-                        scoreAdded = true;
+                        scoreAdded = AddHighScore(newScoreData, oldScore, i);
                         break;
                     }
                 }
-            }
-            else
-            {
-                for (int i = 0; i < oldScore.highScores.Count; i++)
+                else
                 {
                     if (newScoreData.entryScore > oldScore.highScores[i].entryScore)
                     {
-                        oldScore.highScores.Insert(i, newScoreData);
-                        scoreAdded = true;
+                        scoreAdded = AddHighScore(newScoreData, oldScore, i);
                         break;
                     }
                 }
@@ -97,6 +94,12 @@ namespace Meangpu.Scoreboard
 
             UpdateUI(oldScore);
             SaveScores(oldScore);
+        }
+
+        private static bool AddHighScore(ScoreboardEntryData newScoreData, ScoreboardSaveData oldScore, int i)
+        {
+            oldScore.highScores.Insert(i, newScoreData);
+            return true;
         }
 
         private void UpdateUI(ScoreboardSaveData oldScore)
