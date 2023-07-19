@@ -13,7 +13,9 @@ namespace Meangpu.Scoreboard
         [SerializeField] private GameObject scoreboardEntryObject;
         [SerializeField] bool isZeroIsHighScore;
         [SerializeField] bool isDoPrintSavePath;
-        private string SavePath => $"{Application.persistentDataPath}/highScore.json";
+        [SerializeField] string _thisScoreboardName = "highScore.json";
+
+        private string SavePath => $"{Application.persistentDataPath}/{_thisScoreboardName}";
         public List<ScoreboardEntryData> highScores = new();
 
         private void Start()
