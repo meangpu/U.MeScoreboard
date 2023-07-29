@@ -9,5 +9,6 @@ namespace Meangpu.Scoreboard
         public string entryName;
         public int entryScore;
         public bool isNewAdd;
+        public string entryTime;
     }
 }

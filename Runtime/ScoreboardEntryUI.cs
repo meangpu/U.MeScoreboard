@@ -6,9 +6,10 @@ namespace Meangpu.Scoreboard
 {
     public class ScoreboardEntryUI : MonoBehaviour
     {
-        [SerializeField] private TMP_Text entryNameText = null;
-        [SerializeField] private TMP_Text entryScoreText = null;
-        [SerializeField] private TMP_Text idText = null;
+        [SerializeField] private TMP_Text entryNameText;
+        [SerializeField] private TMP_Text entryScoreText;
+        [SerializeField] private TMP_Text idText;
+        [SerializeField] private TMP_Text dateText;
         [SerializeField] Image bgImage;
         [SerializeField] Image bgImageJustAdd;
         [SerializeField] Color highScoreCol;
@@ -16,9 +17,10 @@ namespace Meangpu.Scoreboard
 
         public void Initialize(ScoreboardEntryData scoreboardEntryData, int id)
         {
-            entryNameText.text = scoreboardEntryData.entryName;
-            entryScoreText.text = scoreboardEntryData.entryScore.ToString();
-            idText.text = id.ToString();
+            entryNameText.SetText(scoreboardEntryData.entryName);
+            entryScoreText.SetText(scoreboardEntryData.entryScore.ToString());
+            idText.SetText(id.ToString());
+            dateText?.SetText(scoreboardEntryData.entryTime);
         }
         public void MakeHighScore() => bgImage.color = highScoreCol;
         public void MakeJustAdd() => bgImageJustAdd.color = justAddCol;

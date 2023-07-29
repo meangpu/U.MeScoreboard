@@ -34,14 +34,28 @@ namespace Meangpu.Scoreboard
         }
 
         [Button]
-        public void UserGetNewScore(int newScore)
+        public void UserGetNewScore(int newScore, string userName = "")
         {
-            AddEntry(new ScoreboardEntryData()
+            if (string.IsNullOrEmpty(userName))
             {
-                entryName = GetNameDateTime(),
-                entryScore = newScore,
-                isNewAdd = true
-            });
+                AddEntry(new ScoreboardEntryData()
+                {
+                    entryName = GetNameDateTime(),
+                    entryScore = newScore,
+                    isNewAdd = true,
+                    entryTime = GetNameDateTime()
+                });
+            }
+            else
+            {
+                AddEntry(new ScoreboardEntryData()
+                {
+                    entryName = userName,
+                    entryScore = newScore,
+                    isNewAdd = true,
+                    entryTime = GetNameDateTime()
+                });
+            }
         }
 
         public ScoreboardEntryData MakeScoreOld(ScoreboardEntryData score)
