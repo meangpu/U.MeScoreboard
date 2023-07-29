@@ -58,6 +58,24 @@ namespace Meangpu.Scoreboard
             }
         }
 
+        [Button]
+        public void UpdateUsernameOfJustGetScore(string userName = "")
+        {
+            if (string.IsNullOrEmpty(userName)) return;
+            ScoreboardSaveData nowScoreboard = GetSavedScores();
+
+            for (int i = 0; i < nowScoreboard.highScores.Count; i++)
+            {
+                if (nowScoreboard.highScores[i].isNewAdd)
+                {
+                    nowScoreboard.highScores[i] = UpdateScoreName(nowScoreboard.highScores[i], userName);
+                }
+            }
+
+            UpdateUI(nowScoreboard);
+            SaveScores(nowScoreboard);
+        }
+
         public ScoreboardEntryData MakeScoreOld(ScoreboardEntryData score)
         {
             return new ScoreboardEntryData()
@@ -66,6 +84,17 @@ namespace Meangpu.Scoreboard
                 entryTime = score.entryTime,
                 entryScore = score.entryScore,
                 isNewAdd = false
+            };
+        }
+
+        public ScoreboardEntryData UpdateScoreName(ScoreboardEntryData score, string newUserName = "")
+        {
+            return new ScoreboardEntryData()
+            {
+                entryName = newUserName,
+                entryTime = score.entryTime,
+                entryScore = score.entryScore,
+                isNewAdd = score.isNewAdd
             };
         }
 
