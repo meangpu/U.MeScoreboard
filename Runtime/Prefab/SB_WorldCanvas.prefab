@@ -295,12 +295,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxScoreBoardEntries: 100
   highScoreHolderTransform: {fileID: 3443899632349704469}
-  scoreboardEntryObject: {fileID: 2898650066962766682, guid: 9b2f04982231a5441a2ab134bc530550,
+  scoreboardEntryObject: {fileID: 2898650066962766682, guid: 31f179a38556a9c4b82418e956d232db,
     type: 3}
   isZeroIsHighScore: 0
   isDoPrintSavePath: 0
   _thisScoreboardName: highScore.json
-  highScores: []
+  _scoreboardBG: {fileID: 1028469689263951733}
+  ScoreData: []
 --- !u!1 &8581602274463994287
 GameObject:
   m_ObjectHideFlags: 0

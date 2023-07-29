@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
 using EasyButtons;
 using System;
 using System.Collections.Generic;
@@ -14,17 +15,20 @@ namespace Meangpu.Scoreboard
         [SerializeField] bool isZeroIsHighScore;
         [SerializeField] bool isDoPrintSavePath;
         [SerializeField] string _thisScoreboardName = "highScore.json";
+        [SerializeField] Image _scoreboardBG;
 
         private string SavePath => $"{Application.persistentDataPath}/{_thisScoreboardName}";
-        public List<ScoreboardEntryData> highScores = new();
+        public List<ScoreboardEntryData> ScoreData = new();
 
         private void Start()
         {
             if (isDoPrintSavePath) print(SavePath);
-            ScoreboardSaveData oldScore = GetSavedScores();
-            UpdateUI(oldScore);
-            SaveScores(oldScore);
+
+            LoadScore();
+            UpdateUI();
         }
+
+        private void LoadScore() => ScoreData = GetSavedScores();
 
         public string GetNameDateTime()
         {
@@ -36,132 +40,103 @@ namespace Meangpu.Scoreboard
         [Button]
         public void UserGetNewScore(int newScore, string userName = "")
         {
-            if (string.IsNullOrEmpty(userName))
-            {
-                AddEntry(new ScoreboardEntryData()
-                {
-                    entryName = GetNameDateTime(),
-                    entryScore = newScore,
-                    isNewAdd = true,
-                    entryTime = GetNameDateTime()
-                });
-            }
-            else
-            {
-                AddEntry(new ScoreboardEntryData()
-                {
-                    entryName = userName,
-                    entryScore = newScore,
-                    isNewAdd = true,
-                    entryTime = GetNameDateTime()
-                });
-            }
+            AddEntry(new ScoreboardEntryData(
+                string.IsNullOrEmpty(userName) ? GetNameDateTime() : userName,
+                newScore,
+                GetNameDateTime(),
+                true));
         }
 
         [Button]
         public void UpdateUsernameOfJustGetScore(string userName = "")
         {
             if (string.IsNullOrEmpty(userName)) return;
-            ScoreboardSaveData nowScoreboard = GetSavedScores();
 
-            for (int i = 0; i < nowScoreboard.highScores.Count; i++)
+            for (int i = 0; i < ScoreData.Count; i++)
             {
-                if (nowScoreboard.highScores[i].isNewAdd)
+                // target just add score
+                if (ScoreData[i].isNewAdd)
                 {
-                    nowScoreboard.highScores[i] = UpdateScoreName(nowScoreboard.highScores[i], userName);
+                    ScoreData[i] = UpdateScoreName(ScoreData[i], userName);
+                    break;
                 }
             }
 
-            UpdateUI(nowScoreboard);
-            SaveScores(nowScoreboard);
+            UpdateUI();
+            SaveScores();
         }
 
         public ScoreboardEntryData MakeScoreOld(ScoreboardEntryData score)
         {
-            return new ScoreboardEntryData()
-            {
-                entryName = score.entryName,
-                entryTime = score.entryTime,
-                entryScore = score.entryScore,
-                isNewAdd = false
-            };
+            return new ScoreboardEntryData(score.entryName, score.entryScore, score.entryTime, false);
         }
 
         public ScoreboardEntryData UpdateScoreName(ScoreboardEntryData score, string newUserName = "")
         {
-            return new ScoreboardEntryData()
-            {
-                entryName = newUserName,
-                entryTime = score.entryTime,
-                entryScore = score.entryScore,
-                isNewAdd = score.isNewAdd
-            };
+            return new ScoreboardEntryData(newUserName, score.entryScore, score.entryTime, score.isNewAdd);
         }
 
         public void AddEntry(ScoreboardEntryData newScoreData)
         {
-            ScoreboardSaveData oldScore = GetSavedScores();
+            LoadScore();
+
             bool scoreAdded = false;
 
-            for (int i = 0; i < oldScore.highScores.Count; i++)
-            {
-                oldScore.highScores[i] = MakeScoreOld(oldScore.highScores[i]);
-            }
+            for (int i = 0; i < ScoreData.Count; i++) ScoreData[i] = MakeScoreOld(ScoreData[i]);
 
-            for (int i = 0; i < oldScore.highScores.Count; i++)
+            for (int i = 0; i < ScoreData.Count; i++)
             {
                 if (isZeroIsHighScore)
                 {
-                    if (newScoreData.entryScore < oldScore.highScores[i].entryScore)
+                    if (newScoreData.entryScore < ScoreData[i].entryScore)
                     {
-                        scoreAdded = AddHighScore(newScoreData, oldScore, i);
+                        scoreAdded = AddHighScore(newScoreData, i);
                         break;
                     }
                 }
                 else
                 {
-                    if (newScoreData.entryScore > oldScore.highScores[i].entryScore)
+                    if (newScoreData.entryScore > ScoreData[i].entryScore)
                     {
-                        scoreAdded = AddHighScore(newScoreData, oldScore, i);
+                        scoreAdded = AddHighScore(newScoreData, i);
                         break;
                     }
                 }
             }
 
-            if (!scoreAdded && oldScore.highScores.Count < maxScoreBoardEntries)
+            if (!scoreAdded && ScoreData.Count < maxScoreBoardEntries)
             {
-                oldScore.highScores.Add(newScoreData);
+                ScoreData.Add(newScoreData);
             }
 
-            if (oldScore.highScores.Count > maxScoreBoardEntries)
+            if (ScoreData.Count > maxScoreBoardEntries)
             {
-                oldScore.highScores.RemoveRange(maxScoreBoardEntries, oldScore.highScores.Count - maxScoreBoardEntries);
+                ScoreData.RemoveRange(maxScoreBoardEntries, ScoreData.Count - maxScoreBoardEntries);
             }
 
-            UpdateUI(oldScore);
-            SaveScores(oldScore);
+            UpdateUI();
+            SaveScores();
         }
 
-        private static bool AddHighScore(ScoreboardEntryData newScoreData, ScoreboardSaveData oldScore, int i)
+        private bool AddHighScore(ScoreboardEntryData newScoreData, int i)
         {
-            oldScore.highScores.Insert(i, newScoreData);
+            ScoreData.Insert(i, newScoreData);
             return true;
         }
 
-        private void UpdateUI(ScoreboardSaveData oldScore)
+        private void UpdateUI()
         {
-            foreach (Transform child in highScoreHolderTransform)
-            {
-                Destroy(child.gameObject);
-            }
+            _scoreboardBG.enabled = ScoreData.Count != 0;
 
-            for (int i = 0; i < oldScore.highScores.Count; i++)
+            foreach (Transform child in highScoreHolderTransform) Destroy(child.gameObject);
+
+            for (int i = 0; i < ScoreData.Count; i++)
             {
                 GameObject newScore = Instantiate(scoreboardEntryObject, highScoreHolderTransform);
                 ScoreboardEntryUI uiScpt = newScore.GetComponent<ScoreboardEntryUI>();
-                uiScpt.Initialize(oldScore.highScores[i], i + 1);
+                uiScpt.Initialize(ScoreData[i], i + 1);
 
-                if (oldScore.highScores[i].isNewAdd) uiScpt.MakeJustAdd();
+                if (ScoreData[i].isNewAdd) uiScpt.MakeJustAdd();
                 if (i == 0) uiScpt.MakeHighScore();
             }
         }
@@ -170,29 +145,36 @@ namespace Meangpu.Scoreboard
         public void DeleteScoreJson()
         {
             File.Delete(SavePath);
-            ScoreboardSaveData oldScore = GetSavedScores();
-            UpdateUI(oldScore);
+            ScoreData = GetSavedScores();
+            UpdateUI();
         }
 
-        private ScoreboardSaveData GetSavedScores()
+        private List<ScoreboardEntryData> GetSavedScores()
         {
             if (!File.Exists(SavePath))
             {
                 File.Create(SavePath).Dispose();
-                return new ScoreboardSaveData();
+                return new List<ScoreboardEntryData>();
             }
             using StreamReader stream = new(SavePath);
             string json = stream.ReadToEnd();
 
-            if (json?.Length == 0) return new ScoreboardSaveData();
-            else return JsonUtility.FromJson<ScoreboardSaveData>(json);
+            if (json?.Length == 0) return new List<ScoreboardEntryData>();
+            else return JsonUtility.FromJson<JsonWrapper<ScoreboardEntryData>>(json).list;
         }
 
-        private void SaveScores(ScoreboardSaveData scoreboardSaveData)
+        private void SaveScores()
         {
             using StreamWriter stream = new(SavePath);
-            string json = JsonUtility.ToJson(scoreboardSaveData, true);
+            string json = JsonUtility.ToJson(new JsonWrapper<ScoreboardEntryData>(ScoreData));
             stream.Write(json);
         }
+    }
+
+    [Serializable]
+    public struct JsonWrapper<T>
+    {
+        public List<T> list;
+        public JsonWrapper(List<T> list) => this.list = list;
     }
 }
