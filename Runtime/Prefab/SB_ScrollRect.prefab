@@ -494,7 +494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 995ec1d3aa2a30746ae3b90da25a2114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxScoreBoardEntries: 10
+  maxScoreBoardEntries: 100
   highScoreHolderTransform: {fileID: 6480091637975370090}
   scoreboardEntryObject: {fileID: 2898650066962766682, guid: 31f179a38556a9c4b82418e956d232db,
     type: 3}
