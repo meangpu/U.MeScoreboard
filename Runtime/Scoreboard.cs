@@ -63,6 +63,7 @@ namespace Meangpu.Scoreboard
             return new ScoreboardEntryData()
             {
                 entryName = score.entryName,
+                entryTime = score.entryTime,
                 entryScore = score.entryScore,
                 isNewAdd = false
             };
