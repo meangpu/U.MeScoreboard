@@ -15,6 +15,7 @@ namespace Meangpu.Scoreboard
         [SerializeField] bool isZeroIsHighScore;
         [SerializeField] bool isDoPrintSavePath;
         [SerializeField] string _thisScoreboardName = "highScore.json";
+        [SerializeField] string _defaultName = "Anonymous";
         [SerializeField] Image _scoreboardBG;
 
         private string SavePath => $"{Application.persistentDataPath}/{_thisScoreboardName}";
@@ -41,7 +42,7 @@ namespace Meangpu.Scoreboard
         public void UserGetNewScore(int newScore, string userName = "")
         {
             AddEntry(new ScoreboardEntryData(
-                string.IsNullOrEmpty(userName) ? GetNameDateTime() : userName,
+                string.IsNullOrEmpty(userName) ? _defaultName : userName,
                 newScore,
                 GetNameDateTime(),
                 true));
