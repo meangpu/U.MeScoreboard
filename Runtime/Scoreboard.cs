@@ -127,7 +127,7 @@ namespace Meangpu.Scoreboard
 
         private void UpdateUI()
         {
-            _scoreboardBG.enabled = ScoreData.Count != 0;
+            if (_scoreboardBG != null) _scoreboardBG.enabled = ScoreData.Count != 0;
 
             foreach (Transform child in highScoreHolderTransform) Destroy(child.gameObject);
 
