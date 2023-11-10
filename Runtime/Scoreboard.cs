@@ -13,7 +13,6 @@ namespace Meangpu.Scoreboard
         [SerializeField] private Transform highScoreHolderTransform;
         [SerializeField] private GameObject scoreboardEntryObject;
         [SerializeField] bool isZeroIsHighScore;
-        [SerializeField] bool isDoPrintSavePath;
         [SerializeField] string _thisScoreboardName = "highScore.json";
         [SerializeField] string _defaultName = "Anonymous";
         [SerializeField] Image _scoreboardBG;
@@ -23,11 +22,10 @@ namespace Meangpu.Scoreboard
 
         private void Start()
         {
-            if (isDoPrintSavePath) print(SavePath);
-
             LoadScore();
             UpdateUI();
         }
+
 
         private void LoadScore() => ScoreData = GetSavedScores();
 
@@ -175,6 +173,13 @@ namespace Meangpu.Scoreboard
             using StreamWriter stream = new(SavePath);
             string json = JsonUtility.ToJson(new JsonWrapper<ScoreboardEntryData>(ScoreData));
             stream.Write(json);
+        }
+
+        [Button]
+        void PrintAndCopySavePathToClipboard()
+        {
+            Debug.Log($"{SavePath}");
+            GUIUtility.systemCopyBuffer = Application.persistentDataPath;
         }
     }
 
