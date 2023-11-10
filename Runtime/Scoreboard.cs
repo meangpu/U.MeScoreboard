@@ -129,7 +129,13 @@ namespace Meangpu.Scoreboard
         {
             if (_scoreboardBG != null) _scoreboardBG.enabled = ScoreData.Count != 0;
 
-            foreach (Transform child in highScoreHolderTransform) Destroy(child.gameObject);
+            foreach (Transform child in highScoreHolderTransform)
+            {
+                if (child != null)
+                {
+                    Destroy(child.gameObject);
+                }
+            }
 
             for (int i = 0; i < ScoreData.Count; i++)
             {
