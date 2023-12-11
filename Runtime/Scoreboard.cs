@@ -26,7 +26,6 @@ namespace Meangpu.Scoreboard
             UpdateUI();
         }
 
-
         private void LoadScore() => ScoreData = GetSavedScores();
 
         public string GetNameDateTime()
@@ -126,6 +125,11 @@ namespace Meangpu.Scoreboard
         private void UpdateUI()
         {
             if (_scoreboardBG != null) _scoreboardBG.enabled = ScoreData.Count != 0;
+            if (highScoreHolderTransform == null)
+            {
+                Debug.Log($"highScoreHolderTransform:{highScoreHolderTransform} is NULL!!!", gameObject);
+                return;
+            }
 
             foreach (Transform child in highScoreHolderTransform)
             {
