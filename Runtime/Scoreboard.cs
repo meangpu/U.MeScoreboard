@@ -1,7 +1,7 @@
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
-using EasyButtons;
+using VInspector;
 using System;
 using System.Collections.Generic;
 
